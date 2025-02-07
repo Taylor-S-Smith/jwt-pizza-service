@@ -23,7 +23,6 @@ test('get all franchises', async () => {
     delete franchise2.admins;
 
     const getAllRes = await request(app).get('/api/franchise');
-
     expect(getAllRes.status).toBe(200);
     expect(getAllRes.body).toEqual(expect.arrayContaining([franchise1, franchise2]));
 
@@ -74,6 +73,30 @@ test('delete franchises', async () => {
     await DB.deleteFranchise(franchise2.id);
 })
 
+test('Create a new store', async () => {
+    const franchise = await createFranchise();
+    const store = randomStore(franchise.id);
+    delete franchise.admins;
+
+    const createRes = await request(app).post(`/api/franchise/${franchise.id}/store`).set('Authorization', `Bearer ${adminUserAuthToken}`).send(store);
+    expect(createRes.status).toBe(200);
+
+    store.id = createRes.body.id;
+    expect(createRes.body).toMatchObject(store);
+
+    await DB.deleteFranchise(store.id);
+})
+
+test('Delete a store', async () => {
+    const franchise = await createFranchise();
+    const store = createStore(franchise.id);
+
+    const createRes = await request(app).delete(`/api/franchise/${franchise.id}/store/${store.id}`).set('Authorization', `Bearer ${adminUserAuthToken}`).send(store);
+    expect(createRes.status).toBe(200);
+    expect(createRes.body.message).toBe("store deleted");
+
+    await DB.deleteFranchise(franchise.id);
+})
 
 afterAll(async () => {
     const franchises = await DB.getFranchises();
@@ -99,6 +122,12 @@ async function createFranchise() {
     return await DB.createFranchise(franchise);
 } 
 
+async function createStore(franchiseId) {
+    const store = randomStore(franchiseId);
+
+    return await DB.createStore(franchiseId, store);
+} 
+
 function expectValidJwt(potentialJwt) {
     expect(potentialJwt).toMatch(/^[a-zA-Z0-9\-_]*\.[a-zA-Z0-9\-_]*\.[a-zA-Z0-9\-_]*$/);
 }
@@ -114,3 +143,10 @@ function randomFranchise() {
         stores: [] 
     }
 } 
+
+function randomStore(franchiseId) {
+    return {
+        franchiseId: franchiseId,
+        name: randomName()
+    }
+}
