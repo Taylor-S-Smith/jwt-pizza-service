@@ -97,12 +97,15 @@ jobs:
           name: package
           path: dist/
   deploy:
-    runs-on: ubuntu-latest
+    needs: build
     permissions:
       id-token: write
-    needs: build
+    runs-on: ubuntu-latest
     env:
-      version: ${{needs.build.outputs.version}}
+        version: ${{ github.event.inputs.version }}
+    environment:
+      name: production
+      url: https://pizza.storyweave.click
     steps:
       - name: Download distribution artifact
         uses: actions/download-artifact@v4
