@@ -103,9 +103,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
         version: ${{ github.event.inputs.version }}
-    environment:
-      name: production
-      url: https://pizza.storyweave.click
     steps:
       - name: Download distribution artifact
         uses: actions/download-artifact@v4
