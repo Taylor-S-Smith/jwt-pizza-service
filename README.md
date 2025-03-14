@@ -51,3 +51,5 @@ Nodemon is assumed to be installed globally so that you can have hot reloading w
 ```sh
 npm -g install nodemon
 ```
+
+This fork can be accessed from pizza-service.storyweave.click and is managed by Taylor Smith.
