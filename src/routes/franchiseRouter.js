@@ -2,8 +2,13 @@ const express = require('express');
 const { DB, Role } = require('../database/database.js');
 const { authRouter } = require('./authRouter.js');
 const { StatusCodeError, asyncHandler } = require('../endpointHelper.js');
+const config = require('../config.js');
+const Logger = require('pizza-logger');
+const logger = new Logger(config);
 
 const franchiseRouter = express.Router();
+
+franchiseRouter.use(logger.httpLogger);
 
 franchiseRouter.endpoints = [
   {
