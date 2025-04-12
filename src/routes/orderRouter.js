@@ -82,6 +82,9 @@ orderRouter.post(
   authRouter.authenticateToken,
   asyncHandler(async (req, res) => {
     const orderReq = req.body;
+    if(orderReq.items.length > 10) {
+        res.status(400).send({ message: 'Bad Request, please include no more than 10 pizzas in your order'});
+    }
     const order = await DB.addDinerOrder(req.user, orderReq);
     const orderInfo = { diner: { id: req.user.id, name: req.user.name, email: req.user.email }, order };
     logger.factoryLogger(orderInfo);
